@@ -4,9 +4,9 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
-from clean import load_and_clean
-from analyse import (
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from scripts.clean import load_and_clean
+from scripts.analyse import (
     top_items_by_revenue, top_items_by_quantity,
     sales_by_hour, sales_by_day, monthly_revenue,
     revenue_by_category, server_performance, payment_split,
