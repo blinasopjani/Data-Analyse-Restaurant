@@ -22,70 +22,9 @@ st.markdown("""
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 * { font-family: 'Outfit', sans-serif !important; }
 
-/* Hide default Streamlit header */
-[data-testid="stHeader"] {
-    display: none !important;
-}
-
-/* Hide Streamlit's default collapse button for the sidebar */
-[data-testid="collapsedControl"] {
-    display: none !important;
-}
-
-/* Sidebar Top Header (Inside Sidebar) */
-.sidebar-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 336px;
-    height: 64px;
-    background: #0091EA;
-    color: #FFFFFF;
-    display: flex;
-    align-items: center;
-    padding-left: 24px;
-    font-size: 1.3rem;
-    font-weight: 800;
-    letter-spacing: 0.5px;
-    z-index: 9999;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-/* Main Top Header (Inside Main Content) */
-.main-header {
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: 336px;
-    height: 64px;
-    background: linear-gradient(90deg, #00B0FF 0%, #0091EA 100%);
-    color: #FFFFFF;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 32px;
-    font-size: 1rem;
-    font-weight: 700;
-    z-index: 9998;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    transition: left 0.2s ease-in-out;
-}
-.top-bar-search {
-    font-size: 0.85rem;
-    letter-spacing: 1px;
-    opacity: 0.95;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-/* Handle collapsed sidebar state */
-[data-testid="stSidebar"][data-expanded="false"] ~ .main .main-header {
-    left: 0 !important;
-}
-
-/* Background & Global */
+/* Background & Global spacing */
 .stApp {
-    background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+    background: #F8FAFC;
 }
 #MainMenu, footer { visibility: hidden; }
 
@@ -95,76 +34,14 @@ st.markdown("""
     border-radius: 16px;
     border: 1px solid #E2E8F0;
     padding: 24px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
     margin-bottom: 20px;
-}
-.custom-card:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.02);
 }
 
 /* Sidebar Styling */
 [data-testid="stSidebar"] {
     background-color: #FFFFFF !important;
     border-right: 1px solid #E2E8F0;
-    padding-top: 64px !important;
-}
-[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2 {
-    display: none;
-}
-[data-testid="stSidebar"] hr {
-    margin: 12px 0 !important;
-}
-
-/* Navigation List overrides */
-[data-testid="stSidebar"] .stRadio label {
-    font-size: 0.95rem !important;
-    font-weight: 500 !important;
-    padding: 12px 16px !important;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-    margin: 4px 0 !important;
-    display: flex;
-    align-items: center;
-}
-[data-testid="stSidebar"] .stRadio label p,
-[data-testid="stSidebar"] .stRadio label span {
-    color: #475569 !important;
-    font-weight: 500 !important;
-    transition: all 0.2s ease;
-}
-[data-testid="stSidebar"] .stRadio label:hover {
-    background: #F1F5F9;
-}
-[data-testid="stSidebar"] .stRadio label:hover p,
-[data-testid="stSidebar"] .stRadio label:hover span {
-    color: #0091EA !important;
-}
-
-/* Hide standard radio dot circles completely */
-[data-testid="stSidebar"] [data-baseweb="radio"] input + div {
-    display: none !important;
-}
-[data-testid="stSidebar"] [data-baseweb="radio"] {
-    padding: 0 !important;
-}
-
-/* Active navigation item styling matching the image */
-div[data-baseweb="radio"]:has(input:checked) label {
-    background-color: #E1F5FE !important;
-    border-left: 4px solid #0091EA;
-    border-radius: 0 8px 8px 0;
-    padding-left: 12px !important;
-}
-div[data-baseweb="radio"]:has(input:checked) label p,
-div[data-baseweb="radio"]:has(input:checked) label span {
-    color: #0091EA !important;
-    font-weight: 700 !important;
-}
-
-/* Adjust main content padding to leave space for top bar */
-.main .block-container {
-    padding-top: 96px !important;
 }
 
 /* KPI Grid */
@@ -172,23 +49,13 @@ div[data-baseweb="radio"]:has(input:checked) label span {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 16px;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
     width: 100%;
 }
 @media (max-width: 768px) {
     .kpi-grid {
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
         gap: 12px;
-    }
-    .sidebar-header {
-        display: none !important;
-    }
-    .main-header {
-        left: 0 !important;
-        padding: 0 16px;
-    }
-    .main .block-container {
-        padding-top: 84px !important;
     }
 }
 .kpi-card {
@@ -199,12 +66,11 @@ div[data-baseweb="radio"]:has(input:checked) label span {
     display: flex;
     align-items: center;
     gap: 16px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    transition: transform 0.2s ease, border-color 0.2s ease;
 }
 .kpi-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
     border-color: #0091EA;
 }
 .kpi-icon {
@@ -220,7 +86,6 @@ div[data-baseweb="radio"]:has(input:checked) label span {
 .kpi-info {
     display: flex;
     flex-direction: column;
-    overflow: hidden;
 }
 .kpi-label {
     font-size: 0.75rem !important;
@@ -231,10 +96,9 @@ div[data-baseweb="radio"]:has(input:checked) label span {
     margin-bottom: 4px;
 }
 .kpi-value {
-    font-size: 1.45rem !important;
+    font-size: 1.4rem !important;
     font-weight: 800 !important;
     color: #0F172A !important;
-    line-height: 1.2;
 }
 
 /* Charts inside white cards override */
@@ -244,10 +108,6 @@ div[data-baseweb="radio"]:has(input:checked) label span {
     border: 1px solid #E2E8F0 !important;
     padding: 16px !important;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03) !important;
-    transition: all 0.3s ease;
-}
-[data-testid="stPlotlyChart"]:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05) !important;
 }
 
 /* Tabs styling */
@@ -255,22 +115,12 @@ div[data-baseweb="radio"]:has(input:checked) label span {
     background: #E2E8F0;
     border-radius: 12px;
     padding: 4px;
-    gap: 4px;
 }
 .stTabs [data-baseweb="tab"] {
     border-radius: 8px;
     padding: 10px 24px;
     font-weight: 600;
-    font-size: 0.9rem;
     color: #475569;
-    background: transparent;
-    border: none;
-    transition: all 0.2s ease;
-}
-.stTabs [aria-selected="true"] {
-    background: #FFFFFF !important;
-    color: #0091EA !important;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 /* Headings */
@@ -280,7 +130,6 @@ h1, h2, h3 {
 }
 h3 {
     font-size: 1.15rem !important;
-    margin-bottom: 8px !important;
 }
 
 /* DataFrame */
@@ -289,11 +138,6 @@ h3 {
     border-radius: 12px;
 }
 </style>
-
-<div class="main-header">
-    <span class="top-bar-title">Sales Analytics Dashboard</span>
-    <span class="top-bar-search">🔍 SEARCH</span>
-</div>
 """, unsafe_allow_html=True)
 
 # ── Colours & helpers ─────────────────────────────────────────────────────────
@@ -321,14 +165,13 @@ df = load_and_clean()
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.markdown('<div class="sidebar-header">🍽️ RestaurantIQ</div>', unsafe_allow_html=True)
+    st.markdown("## 🍽️ RestaurantIQ")
     st.caption("Sales Analytics · Jan 2024")
     st.divider()
 
     page = st.radio(
         "Navigation",
         ["📊 Dashboard", "🍕 Menu", "🕐 Time & Days", "👤 Staff", "📋 Raw Data"],
-        label_visibility="collapsed",
     )
 
     st.divider()
