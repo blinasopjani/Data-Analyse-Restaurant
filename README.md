@@ -1,65 +1,65 @@
-# Restaurant Sales Analysis
+# 🍽️ RestaurantIQ: Restaurant Sales Analytics Dashboard
 
-A full-stack data analysis project for a restaurant's sales data — from raw CSV to interactive dashboard.
+An interactive, premium sales analysis dashboard built with Python, Pandas, Plotly, and Streamlit. It transforms raw restaurant sales transaction logs into actionable business insights.
 
-## What this project answers
+🌐 **Live Streamlit App:** [View Live Dashboard](https://data-analyse-restaurant-ubnunanagz3fgw2uv2znat.streamlit.app/)
 
-- Which menu items sell the most (by quantity and by revenue)?
-- What hours and days are busiest?
-- What are the monthly revenue trends?
-- Which categories drive the most profit?
-- Which servers perform best?
-- Cash vs card split over time?
+---
 
-## Stack
+## ✨ Features & Business Insights
 
-| Tool | Purpose |
-|------|---------|
-| Python | Core analysis and automation |
-| pandas / numpy | Data cleaning and aggregation |
-| SQL (SQLite) | Querying structured data |
-| Power BI | Executive dashboards |
-| Streamlit | Interactive web dashboard |
-| Excel | Quick pivot reports |
+- **📊 Sales Overview**: Track total revenue, order count, average transaction value, top menu items, and top servers at a glance.
+- **🍕 Category & Menu Performance**: Identify which dishes generate the most revenue and volume to optimize menu pricing and item placement.
+- **🕐 Time & Days Analysis**: Pinpoint exactly when the restaurant is busiest (hour of day, day of week) to improve staff scheduling.
+- **👤 Staff Performance**: Monitor individual server statistics (orders served, revenue generated) to reward high performers.
+- **💳 Payment Methods & Raw Data**: View cash vs. card preference distribution and explore full transaction details.
 
-## Project structure
+---
 
-```
-Data Analyse Restaurant/
-├── data/
-│   └── restaurant_sales.csv     # Raw sales data
-├── scripts/
-│   ├── clean.py                 # Data cleaning pipeline
-│   ├── analyse.py               # Core analysis functions
-│   └── export_to_excel.py       # Export summary to Excel
-├── notebooks/
-│   └── exploration.ipynb        # Exploratory data analysis
+## 🛠️ Technology Stack
+
+- **Frontend / UI**: [Streamlit](https://streamlit.io/) (configured with a responsive, modern dark-navy sidebar and coral theme)
+- **Data Engineering**: [Pandas](https://pandas.pydata.org/) & [NumPy](https://numpy.org/) for robust data cleaning, validation, and analytics aggregation
+- **Visualization**: [Plotly Express](https://plotly.com/python/) for interactive charts and graphs
+- **Font & Styling**: Custom integration with Google Font `Outfit` and custom inline CSS enhancements
+
+---
+
+## 📂 Project Structure
+
+```text
+Data-Analyse-Restaurant/
+├── .streamlit/
+│   └── config.toml          # Custom Streamlit theme color config
 ├── dashboard/
-│   └── app.py                   # Streamlit dashboard
-├── requirements.txt
-└── README.md
+│   └── app.py               # Streamlit application entrypoint & dashboard code
+├── data/
+│   └── restaurant_sales.csv # Raw sales transactions dataset (CSV)
+├── scripts/
+│   ├── clean.py             # Data loading and pipeline cleaning script
+│   ├── analyse.py           # Core analytics aggregation functions
+│   └── export_to_excel.py   # Utility to export aggregations to Excel
+├── .gitignore
+├── requirements.txt         # Dependencies
+└── README.md                # Project documentation
 ```
 
-## Dataset columns
+---
 
-| Column | Description |
-|--------|-------------|
-| order_id | Unique order identifier |
-| date | Order date (YYYY-MM-DD) |
-| time | Order time (HH:MM) |
-| day_of_week | Day name |
-| menu_item | Item ordered |
-| category | Item category (Pizza, Burger, Salad…) |
-| quantity | Number of units sold |
-| unit_price | Price per unit (£) |
-| total_price | quantity × unit_price (£) |
-| payment_method | Card or Cash |
-| server | Server name |
-| table_number | Table number |
+## ⚙️ Running Locally
 
-## Getting started
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/blinasopjani/Data-Analyse-Restaurant.git
+   cd Data-Analyse-Restaurant
+   ```
 
-```bash
-pip install -r requirements.txt
-streamlit run dashboard/app.py
-```
+2. **Install requirements:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Launch the dashboard:**
+   ```bash
+   streamlit run dashboard/app.py
+   ```
