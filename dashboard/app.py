@@ -20,7 +20,9 @@ st.set_page_config(page_title="Restaurant Analytics", page_icon="🍽️", layou
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
-* { font-family: 'Outfit', sans-serif !important; }
+html, body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"] {
+    font-family: 'Outfit', sans-serif;
+}
 
 /* Background & Global spacing */
 .stApp {
