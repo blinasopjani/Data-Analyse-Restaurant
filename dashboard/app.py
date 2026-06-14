@@ -24,20 +24,13 @@ st.markdown("""
     display: none !important;
 }
 
-/* Custom Top Bar */
-.top-bar {
+/* Sidebar Top Header (Inside Sidebar) */
+.sidebar-header {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 64px;
-    z-index: 99999;
-    display: flex;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-.top-bar-sidebar {
     width: 336px;
-    height: 100%;
+    height: 64px;
     background: #0091EA;
     color: #FFFFFF;
     display: flex;
@@ -46,11 +39,17 @@ st.markdown("""
     font-size: 1.3rem;
     font-weight: 800;
     letter-spacing: 0.5px;
-    flex-shrink: 0;
+    z-index: 9999;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
-.top-bar-content {
-    flex-grow: 1;
-    height: 100%;
+
+/* Main Top Header (Inside Main Content) */
+.main-header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 336px;
+    height: 64px;
     background: linear-gradient(90deg, #00B0FF 0%, #0091EA 100%);
     color: #FFFFFF;
     display: flex;
@@ -59,6 +58,9 @@ st.markdown("""
     padding: 0 32px;
     font-size: 1rem;
     font-weight: 700;
+    z-index: 9998;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: left 0.2s ease-in-out;
 }
 .top-bar-search {
     font-size: 0.85rem;
@@ -66,6 +68,11 @@ st.markdown("""
     opacity: 0.95;
     font-weight: 700;
     cursor: pointer;
+}
+
+/* Handle collapsed sidebar state */
+[data-testid="stSidebar"][data-expanded="false"] ~ .main .main-header {
+    left: 0 !important;
 }
 
 /* Background & Global */
@@ -154,10 +161,11 @@ div[data-baseweb="radio"]:has(input:checked) label {
         grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
         gap: 12px;
     }
-    .top-bar-sidebar {
-        display: none;
+    .sidebar-header {
+        display: none !important;
     }
-    .top-bar-content {
+    .main-header {
+        left: 0 !important;
         padding: 0 16px;
     }
     .main .block-container {
@@ -263,12 +271,9 @@ h3 {
 }
 </style>
 
-<div class="top-bar">
-    <div class="top-bar-sidebar">🍽️ RestaurantIQ</div>
-    <div class="top-bar-content">
-        <span class="top-bar-title">Sales Analytics Dashboard</span>
-        <span class="top-bar-search">🔍 SEARCH</span>
-    </div>
+<div class="main-header">
+    <span class="top-bar-title">Sales Analytics Dashboard</span>
+    <span class="top-bar-search">🔍 SEARCH</span>
 </div>
 """, unsafe_allow_html=True)
 
@@ -297,7 +302,7 @@ df = load_and_clean()
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.markdown("## 🍽️ RestaurantIQ")
+    st.markdown('<div class="sidebar-header">🍽️ RestaurantIQ</div>', unsafe_allow_html=True)
     st.caption("Sales Analytics · Jan 2024")
     st.divider()
 
