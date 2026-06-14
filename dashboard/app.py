@@ -19,6 +19,55 @@ st.markdown("""
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 * { font-family: 'Outfit', sans-serif !important; }
 
+/* Hide default Streamlit header */
+[data-testid="stHeader"] {
+    display: none !important;
+}
+
+/* Custom Top Bar */
+.top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 64px;
+    z-index: 99999;
+    display: flex;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+.top-bar-sidebar {
+    width: 336px;
+    height: 100%;
+    background: #0091EA;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    padding-left: 24px;
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+}
+.top-bar-content {
+    flex-grow: 1;
+    height: 100%;
+    background: linear-gradient(90deg, #00B0FF 0%, #0091EA 100%);
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    font-size: 1rem;
+    font-weight: 700;
+}
+.top-bar-search {
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    opacity: 0.95;
+    font-weight: 700;
+    cursor: pointer;
+}
+
 /* Background & Global */
 .stApp {
     background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
@@ -42,24 +91,54 @@ st.markdown("""
 /* Sidebar Styling */
 [data-testid="stSidebar"] {
     background-color: #FFFFFF !important;
-    border-right: 1px solid #F1F5F9;
+    border-right: 1px solid #E2E8F0;
+    padding-top: 64px !important;
 }
 [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2 {
-    font-weight: 800;
-    color: #0F172A;
-    letter-spacing: -0.5px;
+    display: none;
 }
+[data-testid="stSidebar"] hr {
+    margin: 12px 0 !important;
+}
+
+/* Navigation List overrides */
 [data-testid="stSidebar"] .stRadio label {
     font-size: 0.95rem !important;
     font-weight: 500 !important;
     color: #475569 !important;
-    padding: 10px 14px !important;
-    border-radius: 10px;
+    padding: 12px 16px !important;
+    border-radius: 8px;
     transition: all 0.2s ease;
+    margin: 4px 0 !important;
+    display: flex;
+    align-items: center;
 }
 [data-testid="stSidebar"] .stRadio label:hover {
     background: #F1F5F9;
     color: #0F172A !important;
+}
+
+/* Hide standard radio dot circles completely */
+[data-testid="stSidebar"] [data-baseweb="radio"] input + div {
+    display: none !important;
+}
+[data-testid="stSidebar"] [data-baseweb="radio"] {
+    padding: 0 !important;
+}
+
+/* Active navigation item styling matching the image */
+div[data-baseweb="radio"]:has(input:checked) label {
+    color: #0091EA !important;
+    font-weight: 700 !important;
+    background-color: #E1F5FE !important;
+    border-left: 4px solid #0091EA;
+    border-radius: 0 8px 8px 0;
+    padding-left: 12px !important;
+}
+
+/* Adjust main content padding to leave space for top bar */
+.main .block-container {
+    padding-top: 96px !important;
 }
 
 /* KPI Grid */
@@ -74,6 +153,15 @@ st.markdown("""
     .kpi-grid {
         grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
         gap: 12px;
+    }
+    .top-bar-sidebar {
+        display: none;
+    }
+    .top-bar-content {
+        padding: 0 16px;
+    }
+    .main .block-container {
+        padding-top: 84px !important;
     }
 }
 .kpi-card {
@@ -90,7 +178,7 @@ st.markdown("""
 .kpi-card:hover {
     transform: translateY(-3px);
     box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.08);
-    border-color: #0EA5E9;
+    border-color: #0091EA;
 }
 .kpi-icon {
     font-size: 1.6rem;
@@ -154,7 +242,7 @@ st.markdown("""
 }
 .stTabs [aria-selected="true"] {
     background: #FFFFFF !important;
-    color: #0EA5E9 !important;
+    color: #0091EA !important;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
@@ -173,18 +261,20 @@ h3 {
     border: 1px solid #E2E8F0;
     border-radius: 12px;
 }
-
-/* Radio active state styling overrides */
-[data-testid="stSidebar"] [data-baseweb="radio"] input:checked + div {
-    background-color: #0EA5E9 !important;
-    border-color: #0EA5E9 !important;
-}
 </style>
+
+<div class="top-bar">
+    <div class="top-bar-sidebar">🍽️ RestaurantIQ</div>
+    <div class="top-bar-content">
+        <span class="top-bar-title">Sales Analytics Dashboard</span>
+        <span class="top-bar-search">🔍 SEARCH</span>
+    </div>
+</div>
 """, unsafe_allow_html=True)
 
 # ── Colours & helpers ─────────────────────────────────────────────────────────
-BLUE  = "#0EA5E9"
-CYAN  = "#06B6D4"
+BLUE  = "#0091EA"
+CYAN  = "#00B0FF"
 INDIGO = "#6366F1"
 PAL   = [BLUE, CYAN, INDIGO, "#F59E0B", "#10B981", "#EF4444", "#8B5CF6"]
 
