@@ -1,22 +1,22 @@
-# 🍽️ RestaurantIQ: Restaurant Sales Analytics Dashboard
+# RestaurantIQ: Restaurant Sales Analytics Dashboard
 
 An interactive, premium sales analysis dashboard built with Python, Pandas, Plotly, and Streamlit. It transforms raw restaurant sales transaction logs into actionable business insights.
 
-🌐 **Live Streamlit App:** [View Live Dashboard](https://data-analyse-restaurant-ubnunanagz3fgw2uv2znat.streamlit.app/)
+**Live Streamlit App:** [View Live Dashboard](https://data-analyse-restaurant-ubnunanagz3fgw2uv2znat.streamlit.app/)
 
 ---
 
-## ✨ Features & Business Insights
+## Features & Business Insights
 
-- **📊 Sales Overview**: Track total revenue, order count, average transaction value, top menu items, and top servers at a glance.
-- **🍕 Category & Menu Performance**: Identify which dishes generate the most revenue and volume to optimize menu pricing and item placement.
-- **🕐 Time & Days Analysis**: Pinpoint exactly when the restaurant is busiest (hour of day, day of week) to improve staff scheduling.
-- **👤 Staff Performance**: Monitor individual server statistics (orders served, revenue generated) to reward high performers.
-- **💳 Payment Methods & Raw Data**: View cash vs. card preference distribution and explore full transaction details.
+- **Sales Overview**: Track total revenue, order count, average transaction value, top menu items, and top servers at a glance.
+- **Category & Menu Performance**: Identify which dishes generate the most revenue and volume to optimize menu pricing and item placement.
+- **Time & Days Analysis**: Pinpoint exactly when the restaurant is busiest (hour of day, day of week) to improve staff scheduling.
+- **Staff Performance**: Monitor individual server statistics (orders served, revenue generated) to reward high performers.
+- **Payment Methods & Raw Data**: View cash vs. card preference distribution and explore full transaction details.
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 - **Frontend / UI**: [Streamlit](https://streamlit.io/) (configured with a responsive, modern dark-navy sidebar and coral theme)
 - **Data Engineering**: [Pandas](https://pandas.pydata.org/) & [NumPy](https://numpy.org/) for robust data cleaning, validation, and analytics aggregation
@@ -25,7 +25,7 @@ An interactive, premium sales analysis dashboard built with Python, Pandas, Plot
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```text
 Data-Analyse-Restaurant/
@@ -46,7 +46,7 @@ Data-Analyse-Restaurant/
 
 ---
 
-## ⚙️ Running Locally
+## Running Locally
 
 1. **Clone the repository:**
    ```bash
