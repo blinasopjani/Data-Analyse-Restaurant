@@ -24,6 +24,11 @@ st.markdown("""
     display: none !important;
 }
 
+/* Hide Streamlit's default collapse button for the sidebar */
+[data-testid="collapsedControl"] {
+    display: none !important;
+}
+
 /* Sidebar Top Header (Inside Sidebar) */
 .sidebar-header {
     position: fixed;
@@ -112,7 +117,6 @@ st.markdown("""
 [data-testid="stSidebar"] .stRadio label {
     font-size: 0.95rem !important;
     font-weight: 500 !important;
-    color: #475569 !important;
     padding: 12px 16px !important;
     border-radius: 8px;
     transition: all 0.2s ease;
@@ -120,9 +124,18 @@ st.markdown("""
     display: flex;
     align-items: center;
 }
+[data-testid="stSidebar"] .stRadio label p,
+[data-testid="stSidebar"] .stRadio label span {
+    color: #475569 !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease;
+}
 [data-testid="stSidebar"] .stRadio label:hover {
     background: #F1F5F9;
-    color: #0F172A !important;
+}
+[data-testid="stSidebar"] .stRadio label:hover p,
+[data-testid="stSidebar"] .stRadio label:hover span {
+    color: #0091EA !important;
 }
 
 /* Hide standard radio dot circles completely */
@@ -135,12 +148,15 @@ st.markdown("""
 
 /* Active navigation item styling matching the image */
 div[data-baseweb="radio"]:has(input:checked) label {
-    color: #0091EA !important;
-    font-weight: 700 !important;
     background-color: #E1F5FE !important;
     border-left: 4px solid #0091EA;
     border-radius: 0 8px 8px 0;
     padding-left: 12px !important;
+}
+div[data-baseweb="radio"]:has(input:checked) label p,
+div[data-baseweb="radio"]:has(input:checked) label span {
+    color: #0091EA !important;
+    font-weight: 700 !important;
 }
 
 /* Adjust main content padding to leave space for top bar */
