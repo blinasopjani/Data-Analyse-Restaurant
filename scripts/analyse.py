@@ -1,5 +1,8 @@
 import pandas as pd
-from clean import load_and_clean
+try:
+    from clean import load_and_clean
+except ModuleNotFoundError:
+    from scripts.clean import load_and_clean
 
 
 def top_items_by_revenue(df: pd.DataFrame, n: int = 10) -> pd.DataFrame:

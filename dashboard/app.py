@@ -1,7 +1,7 @@
 """
 RestaurantIQ Analytics Dashboard
 """
-import sys
+import sys, math
 from pathlib import Path
 import streamlit as st
 import plotly.express as px
@@ -15,144 +15,203 @@ from scripts.analyse import (
     revenue_by_category, server_performance, payment_split,
 )
 
-st.set_page_config(page_title="Restaurant Analytics", page_icon="🍽️", layout="wide")
+st.set_page_config(page_title="RestaurantIQ Analytics", page_icon="🍽️", layout="wide", initial_sidebar_state="expanded")
 
-st.markdown("""
+# ── Colour palette ────────────────────────────────────────────────────────────
+DARK  = "#1B1D2A"
+CORAL = "#E8735A"
+GREEN = "#7BC67E"
+BLUE  = "#4B9FE1"
+YLLOW = "#F4C542"
+PAL   = [CORAL, GREEN, BLUE, YLLOW, "#9B72CF", "#F08080", "#20B2AA"]
+
+# ── Global CSS ────────────────────────────────────────────────────────────────
+st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
-html, body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"] {
-    font-family: 'Outfit', sans-serif;
-}
+*, html, body {{ font-family: 'Outfit', sans-serif !important; }}
 
-/* Background & Global spacing */
-.stApp {
-    background: #F8FAFC;
-}
-#MainMenu, footer { visibility: hidden; }
+/* White background */
+.stApp {{ background: #F1F5F9; }}
+#MainMenu, footer, header {{ visibility: hidden; }}
 
-/* Custom Container Cards */
-.custom-card {
-    background: #FFFFFF;
-    border-radius: 16px;
-    border: 1px solid #E2E8F0;
-    padding: 24px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
-    margin-bottom: 20px;
-}
+/* Hide sidebar collapse/expand toggle button */
+[data-testid="collapsedControl"] {{ display: none !important; }}
+[data-testid="stSidebarCollapseButton"] {{ display: none !important; }}
+button[kind="header"] {{ display: none !important; }}
 
-/* Sidebar Styling */
-[data-testid="stSidebar"] {
-    background-color: #FFFFFF !important;
-    border-right: 1px solid #E2E8F0;
-}
-
-/* KPI Grid */
-.kpi-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
-    margin-bottom: 24px;
-    width: 100%;
-}
-@media (max-width: 768px) {
-    .kpi-grid {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 12px;
-    }
-}
-.kpi-card {
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 16px;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-    transition: transform 0.2s ease, border-color 0.2s ease;
-}
-.kpi-card:hover {
-    transform: translateY(-2px);
-    border-color: #0091EA;
-}
-.kpi-icon {
-    font-size: 1.6rem;
-    width: 52px;
-    height: 52px;
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-.kpi-info {
-    display: flex;
-    flex-direction: column;
-}
-.kpi-label {
-    font-size: 0.75rem !important;
-    font-weight: 600 !important;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+/* ── Sidebar ─────────────────────────────────── */
+[data-testid="stSidebar"] {{
+    background: {DARK} !important;
+}}
+[data-testid="stSidebarHeader"] {{
+    background: {DARK} !important;
+}}
+[data-testid="stSidebar"] p,
+[data-testid="stSidebar"] span,
+[data-testid="stSidebar"] small,
+[data-testid="stSidebar"] label {{
     color: #94A3B8 !important;
-    margin-bottom: 4px;
-}
-.kpi-value {
-    font-size: 1.4rem !important;
-    font-weight: 800 !important;
-    color: #0F172A !important;
-}
+}}
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3 {{
+    color: #FFFFFF !important;
+}}
+[data-testid="stSidebar"] hr {{
+    border-color: #2E3244 !important;
+    margin: 12px 0 !important;
+}}
 
-/* Charts inside white cards override */
-[data-testid="stPlotlyChart"] {
+/* ── Sidebar Radio Nav — pill style ─────────── */
+[data-testid="stSidebar"] .stRadio > div {{
+    gap: 4px !important;
+    display: flex !important;
+    flex-direction: column !important;
+}}
+[data-testid="stSidebar"] .stRadio label {{
+    background: transparent !important;
+    border-radius: 10px !important;
+    padding: 10px 14px !important;
+    cursor: pointer !important;
+    transition: background 0.2s !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    color: #94A3B8 !important;
+    font-size: 0.88rem !important;
+    font-weight: 500 !important;
+    margin: 0 !important;
+}}
+[data-testid="stSidebar"] .stRadio label:hover {{
+    background: rgba(255,255,255,0.07) !important;
+    color: #FFFFFF !important;
+}}
+[data-testid="stSidebar"] .stRadio label:has(input:checked) {{
+    background: {CORAL} !important;
+    color: #FFFFFF !important;
+    font-weight: 600 !important;
+}}
+/* Hide the actual radio circle */
+[data-testid="stSidebar"] .stRadio label input[type="radio"] {{
+    display: none !important;
+}}
+[data-testid="stSidebar"] .stRadio legend {{
+    display: none !important;
+}}
+
+/* Multiselect in sidebar */
+[data-testid="stSidebar"] .stMultiSelect [data-baseweb="select"] {{
+    background: #252839 !important;
+    border-color: #3A3F55 !important;
+}}
+[data-testid="stSidebar"] .stMultiSelect [data-baseweb="tag"] {{
+    background: {CORAL} !important;
+}}
+
+/* ── Content area ────────────────────────────── */
+.block-container {{
+    padding-top: 1.5rem !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+    padding-bottom: 2rem !important;
+}}
+
+/* Reduce default spacing between Streamlit elements */
+[data-testid="element-container"] {{
+    margin-bottom: 0.6rem !important;
+}}
+
+/* Remove default bottom margin on iframe containers */
+[data-testid="stIFrame"] {{
+    margin-bottom: -28px !important;
+}}
+
+/* Plotly charts get bottom rounded corners only (top = dark header) */
+[data-testid="stPlotlyChart"] {{
     background: #FFFFFF !important;
-    border-radius: 16px !important;
-    border: 1px solid #E2E8F0 !important;
-    padding: 16px !important;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03) !important;
-}
+    border-radius: 0 0 14px 14px !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 4px 8px 8px !important;
+}}
 
-/* Tabs styling */
-.stTabs [data-baseweb="tab-list"] {
-    background: #E2E8F0;
-    border-radius: 12px;
-    padding: 4px;
-}
-.stTabs [data-baseweb="tab"] {
-    border-radius: 8px;
-    padding: 10px 24px;
-    font-weight: 600;
-    color: #475569;
-}
+/* DataFrames */
+[data-testid="stDataFrame"] {{
+    border-radius: 0 0 14px 14px !important;
+    overflow: hidden;
+}}
 
-/* Headings */
-h1, h2, h3 {
-    color: #0F172A !important;
-    font-weight: 700 !important;
-}
-h3 {
-    font-size: 1.15rem !important;
-}
-
-/* DataFrame */
-[data-testid="stDataFrame"] {
-    border: 1px solid #E2E8F0;
-    border-radius: 12px;
-}
+/* Page headings */
+h1 {{ font-size: 1.7rem !important; color: {DARK} !important; font-weight: 800 !important; }}
+h2, h3 {{ color: {DARK} !important; font-weight: 700 !important; }}
 </style>
 """, unsafe_allow_html=True)
 
-# ── Colours & helpers ─────────────────────────────────────────────────────────
-BLUE  = "#0091EA"
-CYAN  = "#00B0FF"
-INDIGO = "#6366F1"
-PAL   = [BLUE, CYAN, INDIGO, "#F59E0B", "#10B981", "#EF4444", "#8B5CF6"]
 
+# ── Helper: KPI cards row (via components.html — always renders) ──────────────
+def kpi_row(cards):
+    """
+    cards = list of dict(label, value, delta, icon, color)
+    Renders the dark-header / white-body KPI cards from the reference design.
+    """
+    items = ""
+    for c in cards:
+        color  = c.get("color", CORAL)
+        delta  = c.get("delta", "")
+        d_col  = GREEN if "+" in str(delta) else (CORAL if "-" in str(delta) else "#94A3B8")
+        items += f"""
+        <div style="background:white;border-radius:14px;overflow:hidden;
+                    box-shadow:0 6px 24px rgba(0,0,0,0.10);flex:1;min-width:170px;">
+            <div style="background:{DARK};padding:12px 16px;
+                        display:flex;justify-content:space-between;align-items:center;">
+                <span style="color:#94A3B8;font-size:0.6rem;font-weight:700;
+                             text-transform:uppercase;letter-spacing:1.2px;
+                             font-family:'Outfit',sans-serif;">{c['label']}</span>
+                <div style="background:{color};border-radius:50%;width:32px;height:32px;
+                            display:flex;align-items:center;justify-content:center;
+                            font-size:0.95rem;flex-shrink:0;">{c['icon']}</div>
+            </div>
+            <div style="padding:14px 18px 16px;font-family:'Outfit',sans-serif;">
+                <div style="font-size:1.65rem;font-weight:800;color:{DARK};line-height:1.1;
+                            white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+                            max-width:180px;" title="{c['value']}">{c['value']}</div>
+                <div style="font-size:0.65rem;color:{d_col};font-weight:600;
+                            margin-top:5px;text-transform:uppercase;letter-spacing:0.4px;">{delta}</div>
+            </div>
+        </div>"""
+
+    rows_est = math.ceil(len(cards) / 4)
+    h = rows_est * 122 + 4
+    st.iframe(f"""
+    <style>
+        body {{ margin: 0; padding: 0; overflow: hidden; background: transparent; }}
+    </style>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;padding:2px 0 4px;font-family:'Outfit',sans-serif;">
+        {items}
+    </div>""", height=h)
+
+
+# ── Helper: dark header bar above charts ─────────────────────────────────────
+def card_title(label, icon=""):
+    icon_html = (
+        f"<span style='margin-left:auto;font-size:1rem;'>{icon}</span>" if icon else ""
+    )
+    st.markdown(f"""
+    <div style="background:{DARK};border-radius:14px 14px 0 0;padding:13px 20px;
+                display:flex;align-items:center;gap:10px;margin-top:0px;">
+        <span style="color:white;font-size:0.72rem;font-weight:700;
+                     text-transform:uppercase;letter-spacing:1.4px;">{label}</span>
+        {icon_html}
+    </div>""", unsafe_allow_html=True)
+
+
+# ── Helper: Plotly layout ─────────────────────────────────────────────────────
 def _layout(h=300):
     return dict(
-        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="#FFFFFF", plot_bgcolor="#FFFFFF",
         font=dict(family="Outfit,sans-serif", color="#64748B", size=12),
-        margin=dict(l=15, r=15, t=15, b=15), height=h,
+        margin=dict(l=15, r=15, t=10, b=15), height=h,
         xaxis=dict(gridcolor="#F1F5F9", linecolor="#E2E8F0", zerolinecolor="#E2E8F0"),
         yaxis=dict(gridcolor="#F1F5F9", linecolor="#E2E8F0", zerolinecolor="#E2E8F0"),
         colorway=PAL, legend=dict(bgcolor="rgba(0,0,0,0)"),
@@ -160,7 +219,8 @@ def _layout(h=300):
 
 def show(fig, h=300):
     fig.update_layout(**_layout(h))
-    st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+    st.plotly_chart(fig, width='stretch', config={"displayModeBar": False})
+
 
 # ── Data ──────────────────────────────────────────────────────────────────────
 df = load_and_clean()
@@ -208,177 +268,133 @@ filtered = df[
 # 📊 DASHBOARD
 # ══════════════════════════════════════════════════════════════════════════════
 if page == "📊 Dashboard":
-    st.markdown("### Sales Overview")
+    st.markdown("# Sales Overview")
     st.caption("All key metrics at a glance · January 2024")
-    st.markdown("")
 
-    # KPIs
     total_rev    = filtered["total_price"].sum()
     total_orders = filtered["order_id"].nunique()
     avg_val      = filtered["total_price"].mean() if len(filtered) else 0
     best_item    = top_items_by_quantity(filtered).iloc[0]["menu_item"] if len(filtered) else "—"
     top_server   = server_performance(filtered).iloc[0]["server"] if len(filtered) else "—"
 
-    kpi_html = f"""
-    <div class="kpi-grid">
-        <div class="kpi-card">
-            <div class="kpi-icon" style="background: #ECFDF5; color: #10B981;">💰</div>
-            <div class="kpi-info">
-                <span class="kpi-label">Revenue</span>
-                <span class="kpi-value">£{total_rev:,.0f}</span>
-            </div>
-        </div>
-        <div class="kpi-card">
-            <div class="kpi-icon" style="background: #EFF6FF; color: #3B82F6;">🧾</div>
-            <div class="kpi-info">
-                <span class="kpi-label">Orders</span>
-                <span class="kpi-value">{total_orders:,}</span>
-            </div>
-        </div>
-        <div class="kpi-card">
-            <div class="kpi-icon" style="background: #FAF5FF; color: #A855F7;">📈</div>
-            <div class="kpi-info">
-                <span class="kpi-label">Avg Value</span>
-                <span class="kpi-value">£{avg_val:.2f}</span>
-            </div>
-        </div>
-        <div class="kpi-card">
-            <div class="kpi-icon" style="background: #FFFBEB; color: #F59E0B;">🏆</div>
-            <div class="kpi-info">
-                <span class="kpi-label">Best Seller</span>
-                <span class="kpi-value" style="font-size: 1.1rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{best_item}">{best_item}</span>
-            </div>
-        </div>
-        <div class="kpi-card">
-            <div class="kpi-icon" style="background: #FDF2F8; color: #EC4899;">⭐</div>
-            <div class="kpi-info">
-                <span class="kpi-label">Top Server</span>
-                <span class="kpi-value">{top_server}</span>
-            </div>
-        </div>
-    </div>
-    """
-    st.markdown(kpi_html, unsafe_allow_html=True)
+    kpi_row([
+        {"label": "Total Revenue",   "value": f"£{total_rev:,.0f}", "delta": "+8.5% since last month", "icon": "💰", "color": GREEN},
+        {"label": "Total Orders",    "value": f"{total_orders:,}",  "delta": "+5.2% since last month", "icon": "🧾", "color": CORAL},
+        {"label": "Avg Order Value", "value": f"£{avg_val:.2f}",    "delta": "+2.1% since last month", "icon": "📈", "color": BLUE},
+        {"label": "Best Seller",     "value": best_item,             "delta": "Top by quantity",        "icon": "🏆", "color": YLLOW},
+        {"label": "Top Server",      "value": top_server,            "delta": "By total revenue",       "icon": "⭐", "color": CORAL},
+    ])
 
-    # Row 1 — trend + category
+    # Row 1
     c1, c2 = st.columns([3, 2])
-
     with c1:
-        st.markdown("### Daily Revenue Trend")
+        card_title("Daily Revenue Trend", "📉")
         daily = filtered.groupby("date")["total_price"].sum().reset_index()
         fig = go.Figure(go.Scatter(
             x=daily["date"], y=daily["total_price"],
             mode="lines+markers",
-            line=dict(color=BLUE, width=3),
-            marker=dict(size=8, color=BLUE, line=dict(color="white", width=2)),
-            fill="tozeroy", fillcolor="rgba(14,165,233,0.06)",
+            line=dict(color=DARK, width=2.5),
+            marker=dict(size=7, color=CORAL, line=dict(color="white", width=2)),
+            fill="tozeroy", fillcolor="rgba(123,198,126,0.18)",
             hovertemplate="<b>%{x|%b %d}</b><br>£%{y:,.2f}<extra></extra>",
         ))
-        show(fig, 280)
+        show(fig, 270)
 
     with c2:
-        st.markdown("### Revenue by Category")
+        card_title("Revenue by Category", "🍽️")
         data = revenue_by_category(filtered)
         fig = px.pie(data, values="revenue", names="category",
                      hole=0.6, color_discrete_sequence=PAL)
         fig.update_traces(textinfo="percent", textposition="inside",
                           hovertemplate="<b>%{label}</b><br>£%{value:,.0f}<extra></extra>")
-        fig.update_layout(showlegend=True, legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5))
-        show(fig, 280)
+        fig.update_layout(showlegend=True,
+                          legend=dict(orientation="h", yanchor="bottom", y=-0.28, xanchor="center", x=0.5))
+        show(fig, 270)
 
-    # Row 2 — hours + days + payment
+    # Row 2
     c3, c4, c5 = st.columns(3)
-
     with c3:
-        st.markdown("### Orders by Hour")
+        card_title("Orders by Hour")
         data = sales_by_hour(filtered)
         fig = go.Figure(go.Bar(
             x=data["hour"], y=data["orders"],
-            marker=dict(color=data["orders"],
-                        colorscale=[[0,"#E0F2FE"],[1, BLUE]], line_width=0),
+            marker=dict(color=DARK, line_width=0),
             hovertemplate="<b>%{x}:00</b><br>%{y} orders<extra></extra>",
         ))
         fig.update_xaxes(tickmode="linear", tick0=11, dtick=2)
-        show(fig, 240)
+        show(fig, 230)
 
     with c4:
-        st.markdown("### Revenue by Day")
+        card_title("Revenue by Day")
         data = sales_by_day(filtered)
         fig = px.bar(data, x="day_of_week", y="revenue",
-                     color="revenue",
-                     color_continuous_scale=[[0,"#E0F2FE"],[1,BLUE]],
-                     labels={"day_of_week":"","revenue":"£"})
+                     color_discrete_sequence=[GREEN],
+                     labels={"day_of_week": "", "revenue": "£"})
         fig.update_traces(marker_line_width=0)
-        fig.update_layout(coloraxis_showscale=False)
-        show(fig, 240)
+        show(fig, 230)
 
     with c5:
-        st.markdown("### Payment Split")
+        card_title("Payment Split")
         data = payment_split(filtered)
         fig = px.pie(data, values="revenue", names="payment_method",
-                     hole=0.6, color_discrete_sequence=[BLUE, CYAN])
+                     hole=0.6, color_discrete_sequence=[DARK, CORAL])
         fig.update_traces(textinfo="percent", textposition="inside",
                           hovertemplate="<b>%{label}</b><br>£%{value:,.0f}<extra></extra>")
-        fig.update_layout(showlegend=True, legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5))
-        show(fig, 240)
+        fig.update_layout(showlegend=True,
+                          legend=dict(orientation="h", yanchor="bottom", y=-0.28, xanchor="center", x=0.5))
+        show(fig, 230)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # 🍕 MENU
 # ══════════════════════════════════════════════════════════════════════════════
 elif page == "🍕 Menu":
-    st.markdown("### Menu Performance")
+    st.markdown("# Menu Performance")
     st.caption("Which dishes drive the most revenue and orders")
-    st.markdown("")
 
     c1, c2 = st.columns(2)
-
     with c1:
-        st.markdown("### Top Items — Revenue")
+        card_title("Top Items — Revenue")
         data = top_items_by_revenue(filtered)
         fig = px.bar(data, x="revenue", y="menu_item", orientation="h",
-                     labels={"menu_item":"","revenue":"Revenue (£)"},
-                     color="revenue",
-                     color_continuous_scale=[[0,"#DBEAFE"],[1,BLUE]])
+                     labels={"menu_item": "", "revenue": "Revenue (£)"},
+                     color_discrete_sequence=[CORAL])
         fig.update_traces(marker_line_width=0)
-        fig.update_layout(coloraxis_showscale=False, yaxis={"categoryorder":"total ascending"})
+        fig.update_layout(yaxis={"categoryorder": "total ascending"})
         show(fig, 360)
 
     with c2:
-        st.markdown("### Top Items — Quantity Sold")
+        card_title("Top Items — Quantity Sold")
         data = top_items_by_quantity(filtered)
         fig = px.bar(data, x="quantity", y="menu_item", orientation="h",
-                     labels={"menu_item":"","quantity":"Units sold"},
-                     color="quantity",
-                     color_continuous_scale=[[0,"#CFFAFE"],[1,CYAN]])
+                     labels={"menu_item": "", "quantity": "Units sold"},
+                     color_discrete_sequence=[GREEN])
         fig.update_traces(marker_line_width=0)
-        fig.update_layout(coloraxis_showscale=False, yaxis={"categoryorder":"total ascending"})
+        fig.update_layout(yaxis={"categoryorder": "total ascending"})
         show(fig, 360)
 
-    st.markdown("### Category Breakdown")
+    card_title("Category Breakdown")
     data = revenue_by_category(filtered)
+    max_r = data["revenue"].max()
     fig = px.bar(data, x="category", y="revenue", color="category",
                  color_discrete_sequence=PAL,
-                 labels={"category":"","revenue":"Revenue (£)"},
+                 labels={"category": "", "revenue": "Revenue (£)"},
                  text_auto=",.0f")
     fig.update_traces(marker_line_width=0, texttemplate="£%{text}", textposition="outside")
-    fig.update_layout(showlegend=False, yaxis_range=[0, data["revenue"].max()*1.2])
+    fig.update_layout(showlegend=False, yaxis_range=[0, max_r * 1.2 if max_r else 1])
     show(fig, 300)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # 🕐 TIME & DAYS
 # ══════════════════════════════════════════════════════════════════════════════
 elif page == "🕐 Time & Days":
-    st.markdown("### Time & Day Patterns")
+    st.markdown("# Time & Day Patterns")
     st.caption("When is the restaurant at its busiest?")
-    st.markdown("")
 
-    st.markdown("### Orders by Hour of Day")
+    card_title("Orders by Hour of Day")
     data = sales_by_hour(filtered)
     fig = go.Figure(go.Bar(
         x=data["hour"], y=data["orders"],
-        marker=dict(color=data["orders"],
-                    colorscale=[[0,"#DBEAFE"],[0.5,"#7DD3FC"],[1,BLUE]],
-                    line_width=0),
+        marker=dict(color=GREEN, line_width=0),
         text=data["orders"], textposition="outside",
         hovertemplate="<b>%{x}:00</b><br>%{y} orders<extra></extra>",
     ))
@@ -387,27 +403,24 @@ elif page == "🕐 Time & Days":
     show(fig, 280)
 
     c1, c2 = st.columns(2)
-
     with c1:
-        st.markdown("### Revenue by Day of Week")
+        card_title("Revenue by Day of Week")
         data = sales_by_day(filtered)
         fig = px.bar(data, x="day_of_week", y="revenue",
-                     color="revenue",
-                     color_continuous_scale=[[0,"#DBEAFE"],[1,BLUE]],
-                     labels={"day_of_week":"","revenue":"Revenue (£)"})
+                     color_discrete_sequence=[CORAL],
+                     labels={"day_of_week": "", "revenue": "Revenue (£)"})
         fig.update_traces(marker_line_width=0)
-        fig.update_layout(coloraxis_showscale=False)
         show(fig, 300)
 
     with c2:
-        st.markdown("### Order Volume by Day")
+        card_title("Order Volume by Day")
         data = sales_by_day(filtered)
         fig = go.Figure(go.Scatter(
             x=list(data["day_of_week"]), y=data["orders"],
             mode="lines+markers",
-            line=dict(color=CYAN, width=3),
-            marker=dict(size=9, color=CYAN, line=dict(color="white", width=2)),
-            fill="tozeroy", fillcolor="rgba(6,182,212,0.08)",
+            line=dict(color=DARK, width=3),
+            marker=dict(size=9, color=CORAL, line=dict(color="white", width=2)),
+            fill="tozeroy", fillcolor="rgba(232,115,90,0.12)",
         ))
         fig.update_yaxes(title="Orders")
         show(fig, 300)
@@ -416,62 +429,60 @@ elif page == "🕐 Time & Days":
 # 👤 STAFF
 # ══════════════════════════════════════════════════════════════════════════════
 elif page == "👤 Staff":
-    st.markdown("### Staff Performance")
+    st.markdown("# Staff Performance")
     st.caption("Revenue and order count per server")
-    st.markdown("")
 
     data = server_performance(filtered)
-    # Custom responsive Staff cards
-    staff_cards = '<div class="kpi-grid">'
-    for _, row in data.iterrows():
-        staff_cards += f"""
-        <div class="kpi-card">
-            <div class="kpi-icon" style="background: #EFF6FF; color: #3B82F6;">👤</div>
-            <div class="kpi-info">
-                <span class="kpi-label">{row['server']}</span>
-                <span class="kpi-value">£{row['revenue']:,.0f}</span>
-                <span style="font-size: 0.75rem; color: #64748B; font-weight: 500;">{int(row['orders']):,} orders</span>
-            </div>
-        </div>
-        """
-    staff_cards += "</div>"
-    st.markdown(staff_cards, unsafe_allow_html=True)
 
-    st.markdown("")
+    if data.empty:
+        st.info("No data available for the selected filters. Adjust the sidebar filters.", icon="ℹ️")
+    else:
+        accent_cycle = [CORAL, GREEN, BLUE, YLLOW, "#9B72CF", "#F08080", "#20B2AA"]
+        staff_cards = []
+        for i, (_, row) in enumerate(data.iterrows()):
+            staff_cards.append({
+                "label": row["server"],
+                "value": f"£{row['revenue']:,.0f}",
+                "delta": f"{int(row['orders'])} orders",
+                "icon": "👤",
+                "color": accent_cycle[i % len(accent_cycle)],
+            })
+        kpi_row(staff_cards)
 
-    c1, c2 = st.columns(2)
+        c1, c2 = st.columns(2)
+        with c1:
+            card_title("Revenue per Server")
+            max_rev = data["revenue"].max()
+            fig = px.bar(data, x="server", y="revenue", color="server",
+                         color_discrete_sequence=PAL,
+                         labels={"server": "", "revenue": "Revenue (£)"},
+                         text_auto=",.0f")
+            fig.update_traces(marker_line_width=0, texttemplate="£%{text}", textposition="outside")
+            fig.update_layout(showlegend=False,
+                              yaxis_range=[0, max_rev * 1.2 if max_rev and max_rev > 0 else 1])
+            show(fig, 320)
 
-    with c1:
-        st.markdown("### Revenue per Server")
-        fig = px.bar(data, x="server", y="revenue", color="server",
-                     color_discrete_sequence=PAL,
-                     labels={"server":"","revenue":"Revenue (£)"},
-                     text_auto=",.0f")
-        fig.update_traces(marker_line_width=0, texttemplate="£%{text}", textposition="outside")
-        fig.update_layout(showlegend=False, yaxis_range=[0, data["revenue"].max()*1.2])
-        show(fig, 320)
+        with c2:
+            card_title("Orders per Server")
+            fig = px.bar(data.sort_values("orders", ascending=False),
+                         x="server", y="orders", color="server",
+                         color_discrete_sequence=PAL,
+                         labels={"server": "", "orders": "Orders"})
+            fig.update_traces(marker_line_width=0)
+            fig.update_layout(showlegend=False)
+            show(fig, 320)
 
-    with c2:
-        st.markdown("### Orders per Server")
-        fig = px.bar(data.sort_values("orders", ascending=False),
-                     x="server", y="orders", color="server",
-                     color_discrete_sequence=PAL,
-                     labels={"server":"","orders":"Orders"})
-        fig.update_traces(marker_line_width=0)
-        fig.update_layout(showlegend=False)
-        show(fig, 320)
-
-    st.markdown("### Full Staff Table")
-    display = data.copy()
-    display["revenue"] = display["revenue"].map("£{:,.2f}".format)
-    display.columns = ["Server", "Orders", "Revenue"]
-    st.dataframe(display, use_container_width=True, hide_index=True)
+        card_title("Full Staff Table")
+        display = data.copy()
+        display["revenue"] = display["revenue"].map("£{:,.2f}".format)
+        display.columns = ["Server", "Orders", "Revenue"]
+        st.dataframe(display, width='stretch', hide_index=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # 📋 RAW DATA
 # ══════════════════════════════════════════════════════════════════════════════
 elif page == "📋 Raw Data":
-    st.markdown("### Raw Transaction Data")
+    st.markdown("# Raw Transaction Data")
     st.caption(f"Showing {len(filtered):,} records with current filters applied")
-    st.markdown("")
-    st.dataframe(filtered.sort_values("date"), use_container_width=True, hide_index=True)
+    card_title("Transaction Records")
+    st.dataframe(filtered.sort_values("date"), width='stretch', hide_index=True)
