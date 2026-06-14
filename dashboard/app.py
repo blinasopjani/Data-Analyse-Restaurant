@@ -16,106 +16,183 @@ st.set_page_config(page_title="Restaurant Analytics", page_icon="🍽️", layou
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-* { font-family: 'Inter', sans-serif !important; }
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+* { font-family: 'Outfit', sans-serif !important; }
 
-/* Background */
-.stApp { background: #F0F4F8; }
+/* Background & Global */
+.stApp {
+    background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+}
 #MainMenu, footer { visibility: hidden; }
 
-/* Sidebar */
-[data-testid="stSidebar"] {
+/* Custom Container Cards */
+.custom-card {
     background: #FFFFFF;
-    border-right: 1px solid #E2E8F0;
+    border-radius: 16px;
+    border: 1px solid #E2E8F0;
+    padding: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 20px;
 }
-[data-testid="stSidebar"] .stRadio label {
-    font-size: 0.9rem !important;
-    font-weight: 500 !important;
-    color: #475569 !important;
-    padding: 6px 0 !important;
-}
-[data-testid="stSidebar"] .stRadio [data-testid="stMarkdownContainer"] p {
-    font-size: 0.9rem;
+.custom-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.02);
 }
 
-/* Metric cards */
-[data-testid="metric-container"] {
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 12px;
-    padding: 18px 20px !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+/* Sidebar Styling */
+[data-testid="stSidebar"] {
+    background-color: #FFFFFF !important;
+    border-right: 1px solid #F1F5F9;
 }
-[data-testid="stMetricLabel"] p {
-    font-size: 0.75rem !important;
-    font-weight: 600 !important;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-    color: #94A3B8 !important;
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2 {
+    font-weight: 800;
+    color: #0F172A;
+    letter-spacing: -0.5px;
 }
-[data-testid="stMetricValue"] {
-    font-size: 1.7rem !important;
-    font-weight: 800 !important;
+[data-testid="stSidebar"] .stRadio label {
+    font-size: 0.95rem !important;
+    font-weight: 500 !important;
+    color: #475569 !important;
+    padding: 10px 14px !important;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+[data-testid="stSidebar"] .stRadio label:hover {
+    background: #F1F5F9;
     color: #0F172A !important;
 }
 
-/* Charts inside white cards */
-[data-testid="stPlotlyChart"] {
+/* KPI Grid */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+    width: 100%;
+}
+@media (max-width: 768px) {
+    .kpi-grid {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 12px;
+    }
+}
+.kpi-card {
     background: #FFFFFF;
-    border-radius: 12px;
     border: 1px solid #E2E8F0;
-    padding: 16px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.kpi-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.08);
+    border-color: #0EA5E9;
+}
+.kpi-icon {
+    font-size: 1.6rem;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.kpi-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.kpi-label {
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #94A3B8 !important;
+    margin-bottom: 4px;
+}
+.kpi-value {
+    font-size: 1.45rem !important;
+    font-weight: 800 !important;
+    color: #0F172A !important;
+    line-height: 1.2;
 }
 
-/* Tabs */
+/* Charts inside white cards override */
+[data-testid="stPlotlyChart"] {
+    background: #FFFFFF !important;
+    border-radius: 16px !important;
+    border: 1px solid #E2E8F0 !important;
+    padding: 16px !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03) !important;
+    transition: all 0.3s ease;
+}
+[data-testid="stPlotlyChart"]:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Tabs styling */
 .stTabs [data-baseweb="tab-list"] {
-    background: #FFFFFF;
-    border-radius: 10px;
-    border: 1px solid #E2E8F0;
+    background: #E2E8F0;
+    border-radius: 12px;
     padding: 4px;
-    gap: 2px;
+    gap: 4px;
 }
 .stTabs [data-baseweb="tab"] {
     border-radius: 8px;
-    padding: 8px 20px;
-    font-weight: 500;
-    font-size: 0.875rem;
-    color: #64748B;
+    padding: 10px 24px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #475569;
     background: transparent;
     border: none;
+    transition: all 0.2s ease;
 }
 .stTabs [aria-selected="true"] {
-    background: #0EA5E9 !important;
-    color: #FFFFFF !important;
-    font-weight: 600 !important;
+    background: #FFFFFF !important;
+    color: #0EA5E9 !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
-/* Section headings */
-h3 { color: #0F172A !important; font-size: 1rem !important; font-weight: 700 !important; margin-bottom: 4px !important; }
+/* Headings */
+h1, h2, h3 {
+    color: #0F172A !important;
+    font-weight: 700 !important;
+}
+h3 {
+    font-size: 1.15rem !important;
+    margin-bottom: 8px !important;
+}
 
-/* Dataframe */
-[data-testid="stDataFrame"] { border-radius: 10px; }
+/* DataFrame */
+[data-testid="stDataFrame"] {
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+}
 
-/* Multiselect tag */
-[data-baseweb="tag"] { background: #EFF6FF !important; }
-span[data-baseweb="tag"] span { color: #0EA5E9 !important; }
-
-/* Radio dot colour */
-[data-testid="stSidebar"] [data-baseweb="radio"] input:checked + div { background-color: #0EA5E9 !important; border-color: #0EA5E9 !important; }
+/* Radio active state styling overrides */
+[data-testid="stSidebar"] [data-baseweb="radio"] input:checked + div {
+    background-color: #0EA5E9 !important;
+    border-color: #0EA5E9 !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
 # ── Colours & helpers ─────────────────────────────────────────────────────────
 BLUE  = "#0EA5E9"
 CYAN  = "#06B6D4"
-PAL   = [BLUE, CYAN, "#6366F1", "#F59E0B", "#10B981", "#EF4444", "#8B5CF6"]
+INDIGO = "#6366F1"
+PAL   = [BLUE, CYAN, INDIGO, "#F59E0B", "#10B981", "#EF4444", "#8B5CF6"]
 
 def _layout(h=300):
     return dict(
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(family="Inter,sans-serif", color="#64748B", size=12),
-        margin=dict(l=8, r=8, t=8, b=8), height=h,
+        font=dict(family="Outfit,sans-serif", color="#64748B", size=12),
+        margin=dict(l=15, r=15, t=15, b=15), height=h,
         xaxis=dict(gridcolor="#F1F5F9", linecolor="#E2E8F0", zerolinecolor="#E2E8F0"),
         yaxis=dict(gridcolor="#F1F5F9", linecolor="#E2E8F0", zerolinecolor="#E2E8F0"),
         colorway=PAL, legend=dict(bgcolor="rgba(0,0,0,0)"),
@@ -183,14 +260,46 @@ if page == "📊 Dashboard":
     best_item    = top_items_by_quantity(filtered).iloc[0]["menu_item"] if len(filtered) else "—"
     top_server   = server_performance(filtered).iloc[0]["server"] if len(filtered) else "—"
 
-    k1, k2, k3, k4, k5 = st.columns(5)
-    k1.metric("💰 Revenue",       f"£{total_rev:,.0f}")
-    k2.metric("🧾 Orders",        f"{total_orders:,}")
-    k3.metric("📈 Avg Value",     f"£{avg_val:.2f}")
-    k4.metric("🏆 Best Seller",   best_item)
-    k5.metric("⭐ Top Server",    top_server)
-
-    st.markdown("")
+    kpi_html = f"""
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="kpi-icon" style="background: #ECFDF5; color: #10B981;">💰</div>
+            <div class="kpi-info">
+                <span class="kpi-label">Revenue</span>
+                <span class="kpi-value">£{total_rev:,.0f}</span>
+            </div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon" style="background: #EFF6FF; color: #3B82F6;">🧾</div>
+            <div class="kpi-info">
+                <span class="kpi-label">Orders</span>
+                <span class="kpi-value">{total_orders:,}</span>
+            </div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon" style="background: #FAF5FF; color: #A855F7;">📈</div>
+            <div class="kpi-info">
+                <span class="kpi-label">Avg Value</span>
+                <span class="kpi-value">£{avg_val:.2f}</span>
+            </div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon" style="background: #FFFBEB; color: #F59E0B;">🏆</div>
+            <div class="kpi-info">
+                <span class="kpi-label">Best Seller</span>
+                <span class="kpi-value" style="font-size: 1.1rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{best_item}">{best_item}</span>
+            </div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon" style="background: #FDF2F8; color: #EC4899;">⭐</div>
+            <div class="kpi-info">
+                <span class="kpi-label">Top Server</span>
+                <span class="kpi-value">{top_server}</span>
+            </div>
+        </div>
+    </div>
+    """
+    st.markdown(kpi_html, unsafe_allow_html=True)
 
     # Row 1 — trend + category
     c1, c2 = st.columns([3, 2])
@@ -201,23 +310,22 @@ if page == "📊 Dashboard":
         fig = go.Figure(go.Scatter(
             x=daily["date"], y=daily["total_price"],
             mode="lines+markers",
-            line=dict(color=BLUE, width=2.5),
-            marker=dict(size=7, color=BLUE, line=dict(color="white", width=2)),
-            fill="tozeroy", fillcolor="rgba(14,165,233,0.07)",
+            line=dict(color=BLUE, width=3),
+            marker=dict(size=8, color=BLUE, line=dict(color="white", width=2)),
+            fill="tozeroy", fillcolor="rgba(14,165,233,0.06)",
             hovertemplate="<b>%{x|%b %d}</b><br>£%{y:,.2f}<extra></extra>",
         ))
-        fig.update_yaxes(title="Revenue (£)")
-        show(fig, 260)
+        show(fig, 280)
 
     with c2:
         st.markdown("### Revenue by Category")
         data = revenue_by_category(filtered)
         fig = px.pie(data, values="revenue", names="category",
-                     hole=0.55, color_discrete_sequence=PAL)
-        fig.update_traces(textinfo="label+percent", textposition="outside",
+                     hole=0.6, color_discrete_sequence=PAL)
+        fig.update_traces(textinfo="percent", textposition="inside",
                           hovertemplate="<b>%{label}</b><br>£%{value:,.0f}<extra></extra>")
-        fig.update_layout(showlegend=False)
-        show(fig, 260)
+        fig.update_layout(showlegend=True, legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5))
+        show(fig, 280)
 
     # Row 2 — hours + days + payment
     c3, c4, c5 = st.columns(3)
@@ -228,32 +336,32 @@ if page == "📊 Dashboard":
         fig = go.Figure(go.Bar(
             x=data["hour"], y=data["orders"],
             marker=dict(color=data["orders"],
-                        colorscale=[[0,"#DBEAFE"],[1, BLUE]], line_width=0),
+                        colorscale=[[0,"#E0F2FE"],[1, BLUE]], line_width=0),
             hovertemplate="<b>%{x}:00</b><br>%{y} orders<extra></extra>",
         ))
         fig.update_xaxes(tickmode="linear", tick0=11, dtick=2)
-        show(fig, 220)
+        show(fig, 240)
 
     with c4:
         st.markdown("### Revenue by Day")
         data = sales_by_day(filtered)
         fig = px.bar(data, x="day_of_week", y="revenue",
                      color="revenue",
-                     color_continuous_scale=[[0,"#DBEAFE"],[1,BLUE]],
+                     color_continuous_scale=[[0,"#E0F2FE"],[1,BLUE]],
                      labels={"day_of_week":"","revenue":"£"})
         fig.update_traces(marker_line_width=0)
         fig.update_layout(coloraxis_showscale=False)
-        show(fig, 220)
+        show(fig, 240)
 
     with c5:
         st.markdown("### Payment Split")
         data = payment_split(filtered)
         fig = px.pie(data, values="revenue", names="payment_method",
-                     hole=0.55, color_discrete_sequence=[BLUE, CYAN])
-        fig.update_traces(textinfo="label+percent", textposition="outside",
+                     hole=0.6, color_discrete_sequence=[BLUE, CYAN])
+        fig.update_traces(textinfo="percent", textposition="inside",
                           hovertemplate="<b>%{label}</b><br>£%{value:,.0f}<extra></extra>")
-        fig.update_layout(showlegend=False)
-        show(fig, 220)
+        fig.update_layout(showlegend=True, legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5))
+        show(fig, 240)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # 🍕 MENU
@@ -354,9 +462,21 @@ elif page == "👤 Staff":
     st.markdown("")
 
     data = server_performance(filtered)
-    cols = st.columns(len(data))
-    for col, (_, row) in zip(cols, data.iterrows()):
-        col.metric(f"👤 {row['server']}", f"£{row['revenue']:,.0f}", f"{int(row['orders'])} orders")
+    # Custom responsive Staff cards
+    staff_cards = '<div class="kpi-grid">'
+    for _, row in data.iterrows():
+        staff_cards += f"""
+        <div class="kpi-card">
+            <div class="kpi-icon" style="background: #EFF6FF; color: #3B82F6;">👤</div>
+            <div class="kpi-info">
+                <span class="kpi-label">{row['server']}</span>
+                <span class="kpi-value">£{row['revenue']:,.0f}</span>
+                <span style="font-size: 0.75rem; color: #64748B; font-weight: 500;">{int(row['orders']):,} orders</span>
+            </div>
+        </div>
+        """
+    staff_cards += "</div>"
+    st.markdown(staff_cards, unsafe_allow_html=True)
 
     st.markdown("")
 
