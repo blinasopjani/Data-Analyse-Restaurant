@@ -228,7 +228,7 @@ df = load_and_clean()
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("## 🍽️ RestaurantIQ")
-    st.caption("Sales Analytics · Jan 2024")
+    st.caption("Sales Analytics")
     st.divider()
 
     page = st.radio(
@@ -269,7 +269,7 @@ filtered = df[
 # ══════════════════════════════════════════════════════════════════════════════
 if page == "📊 Dashboard":
     st.markdown("# Sales Overview")
-    st.caption("All key metrics at a glance · January 2024")
+    st.caption("All key metrics at a glance")
 
     total_rev    = filtered["total_price"].sum()
     total_orders = filtered["order_id"].nunique()
